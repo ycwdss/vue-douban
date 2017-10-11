@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+
+</head>
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.css" rel="stylesheet">
+<style>
+  .fade-enter-active, .fade-leave-active {
+    background-color: red;
+    transition: opacity 2s
+  }
+
+  .fade-enter, .fade-leave-active {
+    opacity: 0
+  }
+</style>
+<body>
+
+<script src="https://cdn.bootcss.com/vue/2.3.3/vue.js"></script>
+<script src="https://cdn.bootcss.com/vue-router/2.5.3/vue-router.js"></script>
+
+<div id="app">
+  <p>
+    <router-link to="/user/foo">111</router-link>
+    <router-link to="/user/foo/profile">222</router-link>
+    <router-link to="/user/foo/posts">333</router-link>
+  </p>
+
+  <router-view></router-view>
+
+</div>
+<script>
+  const User = {
+    template: `
+    <div class="user">
+      <h2>下面是渲染的儿子区域：father是{{ $route.params.id }}</h2>
+      <div style="border:1px solid red;padding: 20px 0;position: absolute;width: 500px;">
+        <transition
+
+         enter-active-class="animated bounceInRight"
+         leave-active-class="animated bounceOutLeft"
+         mode="out-in"
+         >
+            <router-view></router-view>
+        </transition>
+        </div>
+    </div>
+  `
+  }
+  const UserHome = {template: ' <transition name="slide"><div>大儿子</div></transition>'}
+  const UserProfile = {template: '<div>二儿子</div>'}
+  const UserPosts = {template: '<div>小儿子</div>'}
+  const NotFoundComponent = {template: '<div>404</div>'}
+
+  const router = new VueRouter({
+    routes: [
+      {
+        path: '/user/:id',
+        component: User,
+        children: [
+          {
+            path: '',
+            component: UserHome
+          },
+          {
+            path: 'profile0',
+            component: UserProfile,
+            /*alias: 'posts'*/
+          },
+          {
+            path: 'posts',
+            component: UserPosts
+          },
+          //设置404
+          {
+            path: '*',
+            component: NotFoundComponent
+          }
+        ]
+      }
+    ]
+  })
+  const app = new Vue({router}).$mount('#app')
+</script>
+</body>
+</html>
